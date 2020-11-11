@@ -2,7 +2,7 @@
 ## About Rate limiter
     Rate limiter will limit the number of calls for a system. 
     If a user or macine request for API more then the specified limit, then the request will not be processed.
-## Use of RateLimiter
+## Use
     It prevents excessive use of the system by client. It helps minimizing latency in a distributed system.
 ## Design
     Rate limiter has been implemented using leaky bucket algorithm.
@@ -18,12 +18,12 @@
    <version>${version.number}</version>
 </dependency>
 ```
-## Rate Limiter can be configured
-Rate limiter can be configured with propertied like below
-rate-limiter:
-    unit: SECOND
-    limit: 3
-    
-unit can be SECOND or MINUTE
-limit - the number of request for a unit
-example - in the above configuration 3 request are allowed per second.
+## Rate Limiter can be configured based on need
+    Rate limiter can be configured with propertied like below
+    rate-limiter:
+        unit: SECOND
+        limit: 3
+        
+    unit can be SECOND or MINUTE
+    limit - the number of request for a unit
+    example - in the above configuration 3 request are allowed per second.
