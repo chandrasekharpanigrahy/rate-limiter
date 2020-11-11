@@ -15,10 +15,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RateLimiterServiceTest {
 
     @Autowired
-    RateLimiterService rateLimiterService;
+    private RateLimiterService rateLimiterService;
 
     @Autowired
-    RateLimiterRepo repo;
+    private RateLimiterProperty property;
+
+    @Autowired
+    private RateLimiterRepo repo;
 
     @Test
     public void should_update_rateLimiter(){
@@ -27,11 +30,12 @@ public class RateLimiterServiceTest {
     }
 
     @Test
-    public void should_return_limit_exceded_as_true_when_multiple_updates_are_done_in_few_seconds() throws Exception {
+    public void should_return_limit_exceded_as_true_when_multiple_updates_are_done_in_few_seconds() {
+        property.setLimit(2L);
+        property.setUnit("SECOND");
         rateLimiterService.updateForRequest("client1");
         rateLimiterService.updateForRequest("client1");
         rateLimiterService.updateForRequest("client1");
-        rateLimiterService.updateForRequest("client1");
-        assertTrue(rateLimiterService.isLimitExceeded("client1", 2L, 5L));
+        assertTrue(rateLimiterService.isLimitExceeded("client1"));
     }
 }

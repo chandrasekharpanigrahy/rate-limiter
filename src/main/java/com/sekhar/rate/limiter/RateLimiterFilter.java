@@ -23,7 +23,7 @@ public class RateLimiterFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         val clientId = ((HttpServletRequest) request).getHeader("X-API-Key");
         rateLimiterService.updateForRequest(clientId);
-        boolean limitExceeded = rateLimiterService.isLimitExceeded(clientId, 2L, 10L);
+        boolean limitExceeded = rateLimiterService.isLimitExceeded(clientId);
         if(limitExceeded) {
             ((HttpServletResponse)response).setStatus(429);
             // Retry-After can be included in response to tell user how much user has to wait

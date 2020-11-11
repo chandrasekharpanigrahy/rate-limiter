@@ -1,9 +1,11 @@
 package com.sekhar.rate.limiter.config;
 
 import com.sekhar.rate.limiter.RateLimiterFilter;
+import com.sekhar.rate.limiter.RateLimiterProperty;
 import com.sekhar.rate.limiter.RateLimiterRepo;
 import com.sekhar.rate.limiter.RateLimiterService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +23,14 @@ public class RateLimiterConfig {
     }
 
     @Bean
-    public RateLimiterService rateLimiterService(RateLimiterRepo rateLimiterRepo) {
-        return new RateLimiterService(rateLimiterRepo);
+    public RateLimiterService rateLimiterService(RateLimiterRepo rateLimiterRepo, RateLimiterProperty rateLimiterProperty) {
+        return new RateLimiterService(rateLimiterRepo, rateLimiterProperty);
+    }
+
+    @Bean
+    @ConfigurationProperties("rate-limiter")
+    public RateLimiterProperty rateLimiterProperty(){
+        return new RateLimiterProperty();
     }
 
 }

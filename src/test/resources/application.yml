@@ -3,3 +3,6 @@ spring:
     mongodb:
       uri: mongodb+srv://material-management:AjayaApurba1@cluster0.p2qoo.mongodb.net/test
 
+rate-limiter:
+    unit: SECOND
+    limit: 3

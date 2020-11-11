@@ -18,4 +18,12 @@
    <version>${version.number}</version>
 </dependency>
 ```
+## Rate Limiter can be configured
+Rate limiter can be configured with propertied like below
+rate-limiter:
+    unit: SECOND
+    limit: 3
     
+unit can be SECOND or MINUTE
+limit - the number of request for a unit
+example - in the above configuration 3 request are allowed per second.
