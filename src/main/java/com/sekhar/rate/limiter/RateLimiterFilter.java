@@ -15,20 +15,22 @@ public class RateLimiterFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
 
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        // pick client id from auth token
         val clientId = ((HttpServletRequest) request).getHeader("X-API-Key");
-        rateLimiterService.updateForRequest(clientId);
+        rateLimiterService.deleteEntityLessThanWindowTime(clientId);
         boolean limitExceeded = rateLimiterService.isLimitExceeded(clientId);
-        if(limitExceeded) {
-            ((HttpServletResponse)response).setStatus(429);
+        if (limitExceeded) {
+            ((HttpServletResponse) response).setStatus(429);
             // Retry-After can be included in response to tell user how much user has to wait
             return;
         }
+        rateLimiterService.updateForRequest(clientId);
         chain.doFilter(request, response);
     }
 

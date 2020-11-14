@@ -43,4 +43,17 @@ public class RateLimiterServiceIntegrationTest {
         mockMvc.perform(request).andExpect(status().isTooManyRequests());
     }
 
+    @Test
+    public void should_return_OK_as_when_API_is_called_after_waiting_for_specified_time_if_number_of_request_are_exceeded() throws Exception {
+        val request = get("/api/v1/sample")
+                .header("X-API-Key", "client1")
+                .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(request);
+        mockMvc.perform(request);
+        mockMvc.perform(request);
+        mockMvc.perform(request).andExpect(status().isTooManyRequests());
+        Thread.sleep(1000);
+        mockMvc.perform(request).andExpect(status().isOk());
+    }
+
 }
