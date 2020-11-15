@@ -1,7 +1,7 @@
 package com.sekhar.rate.limiter;
 
 import lombok.val;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import redis.embedded.RedisServer;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,6 +25,21 @@ public class RateLimiterServiceIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private RateLimiterProperty rateLimiterProperty;
+
+    static RedisServer redisServer = new RedisServer();
+
+    @BeforeAll
+    static void setUp() {
+        redisServer.start();
+    }
+
+    @AfterAll
+    static void destroy() {
+        redisServer.stop();
+    }
+
     @Test
     public void should_return_OK_as_status_when_number_of_requests_are_with_in_limit() throws Exception {
         val request = get("/api/v1/sample")
@@ -33,7 +49,7 @@ public class RateLimiterServiceIntegrationTest {
     }
 
     @Test
-    public void should_return_too_many_request_as_status_when_number_of_requests_are_out_of_limit() throws Exception {
+    public void should_return_too_many_request_as_status_when_number_of_requests_are_out_of_limit_for_secoond() throws Exception {
         val request = get("/api/v1/sample")
                 .header("X-API-Key", "client1")
                 .contentType(MediaType.APPLICATION_JSON);
@@ -54,6 +70,19 @@ public class RateLimiterServiceIntegrationTest {
         mockMvc.perform(request).andExpect(status().isTooManyRequests());
         Thread.sleep(1000);
         mockMvc.perform(request).andExpect(status().isOk());
+    }
+
+    @Test
+    public void should_return_too_many_request_as_status_when_number_of_requests_are_out_of_limit_for_minute() throws Exception {
+        rateLimiterProperty.setUnit("MINUTE");
+        val request = get("/api/v1/sample")
+                .header("X-API-Key", "client1")
+                .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(request);
+        mockMvc.perform(request);
+        mockMvc.perform(request);
+        Thread.sleep(1000);
+        mockMvc.perform(request).andExpect(status().isTooManyRequests());
     }
 
 }

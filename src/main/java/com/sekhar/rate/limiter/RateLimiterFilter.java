@@ -23,7 +23,6 @@ public class RateLimiterFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // pick client id from auth token
         val clientId = ((HttpServletRequest) request).getHeader("X-API-Key");
-        rateLimiterService.deleteEntityLessThanWindowTime(clientId);
         boolean limitExceeded = rateLimiterService.isLimitExceeded(clientId);
         if (limitExceeded) {
             ((HttpServletResponse) response).setStatus(429);

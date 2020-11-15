@@ -1,7 +1,5 @@
 spring:
-  data:
-    mongodb:
-      uri: mongodb+srv://material-management:AjayaApurba1@cluster0.p2qoo.mongodb.net/test
+  name: rate-limiter
 
 rate-limiter:
     unit: SECOND

@@ -2,7 +2,6 @@ package com.sekhar.rate.limiter.config;
 
 import com.sekhar.rate.limiter.RateLimiterFilter;
 import com.sekhar.rate.limiter.RateLimiterProperty;
-import com.sekhar.rate.limiter.RateLimiterRepo;
 import com.sekhar.rate.limiter.RateLimiterService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -10,6 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.Clock;
 
@@ -31,7 +32,20 @@ public class RateLimiterConfig {
     }
 
     @Bean
-    public RateLimiterService rateLimiterService(RateLimiterRepo rateLimiterRepo, RateLimiterProperty rateLimiterProperty, Clock clock) {
+    JedisConnectionFactory jedisConnectionFactory() {
+        JedisConnectionFactory factory = new JedisConnectionFactory();
+        return factory;
+    }
+
+    @Bean
+    public StringRedisTemplate rateLimiterRepo() {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(jedisConnectionFactory());
+        return template;
+    }
+
+    @Bean
+    public RateLimiterService rateLimiterService(StringRedisTemplate rateLimiterRepo, RateLimiterProperty rateLimiterProperty, Clock clock) {
         return new RateLimiterService(rateLimiterRepo, rateLimiterProperty, clock);
     }
 
