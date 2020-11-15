@@ -4,6 +4,14 @@
     If a user or machine request for API more then the specified limit, then the request will not be processed.
 ## Use
     It prevents excessive use of the system by client. It helps minimizing latency in a distributed system.
+    
+## Design
+    Master branch code use mongoDB for rate limiter.
+    Redis branch code use redis for rate limiter. This version will have low latency compare to master code.
+        
+    If Rate limiter is set to N request per second then accessing APIs more then N request will not be processed
+    and 429 (Too many request) status code will be sent to client.
+    
 ## How to use
     Add below dependency
 ```xml
@@ -25,6 +33,3 @@
     By deffault the configuration will be enabled. To disable add below configuration in properties
         rate-limiter:
             enabled: false
-## Design
-    If Rate limiter is set to N request per second then accessing APIs more then N request will not be processed
-    and 429 (Too many request) status code will be sent to client.
